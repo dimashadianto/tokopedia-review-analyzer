@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Hasil Analisis · ReviewInsight{% endblock %}
+{% block content %}
+{% set n = data.kept|length %}
+{% set pa = (100 * data.jumlah_asli / n)|round(1) %}
+{% set pp = (100 - pa)|round(1) %}
+{% set tone = 't-ok' if data.skor >= 80 else ('t-mid' if data.skor >= 50 else 't-bad') %}
+<h1>Hasil Analisis Produk</h1>
+<p class="sub">Ringkasan hasil klasifikasi ulasan dan rekomendasi keputusan pembelian · ID Produk {{ pid }}</p>
+
+<div class="stats">
+  <div class="stat"><small>Total Ulasan</small><b>{{ n }}</b></div>
+  <div class="stat"><small>Ulasan Asli</small><b class="ok">{{ pa }}%</b></div>
+  <div class="stat"><small>Ulasan Palsu</small><b class="bad">{{ pp }}%</b></div>
+  <div class="stat"><small>Skor Analisis</small><b>{{ data.skor|round|int }}</b></div>
+</div>
+
+<div class="banner {{ tone }}">
+  <h2>{{ '✔' if tone == 't-ok' else '!' }} {{ data.kategori }}</h2>
+  <p>Berdasarkan hasil analisis terhadap {{ n }} ulasan, sebanyak {{ pa }}% ulasan teridentifikasi sebagai ulasan asli dan {{ pp }}% sebagai ulasan palsu. Dengan skor analisis sebesar <b>{{ data.skor|round|int }}</b>, produk termasuk dalam kategori <b>{{ data.kategori }}</b>.</p>
+</div>
+<p class="mu" style="font-size:.8rem;margin:0 0 20px">{{ data.total_scraped }} ulasan diambil; {{ data.removed|length }} dilewati karena kurang dari {{ min_words }} kata setelah preprocessing.</p>
+
+<div class="card">
+  <div class="head">
+    <h2 style="margin:0">Daftar Ulasan</h2>
+    <span class="mu" style="font-size:.78rem">Menampilkan {{ items[0][0] + 1 }}–{{ items[-1][0] + 1 }} dari {{ n }} ulasan</span>
+  </div>
+  {% for i, r in items %}
+  <div class="rev">
+    <div class="top"><span>{{ r.username or 'Pengguna anonim' }}</span><span class="badge {{ r.label }}">{{ r.label|upper }}</span></div>
+    <p>{{ r.review_text }}</p>
+    <a class="btn out" href="{{ url_for('detail', pid=pid, idx=i) }}">Lihat Interpretasi SHAP</a>
+  </div>
+  {% endfor %}
+  {% if total_pages > 1 %}
+  <div class="pager">
+    {% if page > 1 %}<a href="{{ url_for('hasil', pid=pid, page=page-1) }}">← Sebelumnya</a>{% endif %}
+    <span class="mu">Halaman {{ page }} dari {{ total_pages }}</span>
+    {% if page < total_pages %}<a href="{{ url_for('hasil', pid=pid, page=page+1) }}">Berikutnya →</a>{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

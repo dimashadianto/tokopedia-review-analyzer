@@ -1,7 +1,6 @@
-
-import re
 import csv
-from config import SLANG_PATH, MIN_WORDS
+import re
+from config import MIN_WORDS, SLANG_PATH
 
 PREFIX_PATTERN = re.compile(
     r"^(kualitas produk|product quality)\s*:\s*",
@@ -23,11 +22,18 @@ def load_slang_dictionary(path):
 
     return slang_dictionary
 
-
 SLANG_DICTIONARY = load_slang_dictionary(SLANG_PATH)
 
+def _is_empty(text):
+    return text is None or (isinstance(text, float) and text != text)
+
+
 def remove_review_prefix(text):
+    if _is_empty(text):
+        return ""
+
     return PREFIX_PATTERN.sub("", str(text).strip())
+
 
 def clean_review_text(text):
     text = remove_review_prefix(text)
@@ -38,8 +44,10 @@ def clean_review_text(text):
 
     return re.sub(r"\s+", " ", text).strip()
 
+
 def apply_case_folding(text):
     return text.lower().strip()
+
 
 def normalize_slang(text):
     return " ".join(
@@ -67,3 +75,24 @@ def preprocess_review_for_model(text):
         return None
 
     return processed_text
+
+def split_reviews(reviews, min_words=MIN_WORDS):
+    kept = []
+    removed = []
+
+    for review in reviews:
+        item = dict(review)
+        
+        raw_text = item.get("review_text")
+        item["review_text_raw"] = "" if _is_empty(raw_text) else str(raw_text)
+        item["review_text"] = remove_review_prefix(raw_text)
+        item["review_clean"] = preprocess_review(item["review_text"])
+        item["word_count"] = count_words(item["review_clean"])
+
+        if item["word_count"] < min_words:
+            item["removed_reason"] = f"kurang dari {min_words} kata"
+            removed.append(item)
+        else:
+            kept.append(item)
+
+    return kept, removed

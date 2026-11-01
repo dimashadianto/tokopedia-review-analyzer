@@ -3,7 +3,7 @@ import re
 import sys
 from pathlib import Path
 import pandas as pd
-from service.pre_process import preprocess_review_for_model
+from service.preprocess import preprocess_review_for_model
 
 GENERIC_REVIEWS = {
     "bagus", "baguss", "good", "good product", "mantap",

@@ -1,0 +1,51 @@
+:root{--g:#16a34a;--gd:#15803d;--bg:#f6f8fa;--tx:#111827;--mu:#6b7280;--bd:#e5e7eb;--red:#dc2626;--amb:#d97706}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--g)}
+.nav{background:#fff;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;padding:14px 5vw}
+.brand{font-weight:700;color:var(--g);text-decoration:none;font-size:1.1rem}
+.nav a.l{margin-left:20px;color:var(--mu);text-decoration:none;font-size:.9rem}
+.nav a.l.on{color:var(--g)}
+main{flex:1;width:100%;max-width:960px;margin:0 auto;padding:20px 20px}
+.foot{text-align:center;padding:20px;font-size:.8rem;color:var(--mu);background:#fff;border-top:1px solid var(--bd)}
+.foot b{display:block;color:var(--g)}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:24px;margin-bottom:20px}
+h1{font-size:1.8rem;margin:0 0 6px}h2{font-size:1.1rem;margin:0 0 10px}
+.sub,.mu{color:var(--mu);font-size:.9rem}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;padding:30px 0}
+.hero h1{font-size:2.6rem;line-height:1.15}.hero h1 span{color:var(--g);display:block}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{background:#fff;border:1px solid var(--bd);border-radius:8px;padding:4px 10px;font-size:.75rem;color:var(--mu)}
+label{font-size:.85rem;font-weight:600}
+input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--bd);border-radius:8px;font-size:.95rem;margin:6px 0 14px}
+.btn{display:inline-block;background:var(--g);color:#fff;border:0;border-radius:8px;padding:11px 16px;font-weight:600;cursor:pointer;text-decoration:none;font-size:.9rem;text-align:center}
+.btn:disabled{opacity:.6;cursor:wait}.btn.full{width:100%}
+.btn.out{background:#fff;color:var(--g);border:1px solid var(--g);padding:5px 12px;font-size:.8rem;font-weight:500}
+.flash{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.9rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
+.stat{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.stat small{color:var(--mu);font-size:.78rem}.stat b{display:block;font-size:1.8rem}
+.ok{color:var(--g)}.bad{color:var(--red)}
+.banner{border-radius:12px;padding:16px 20px;margin-bottom:8px;border:1px solid}
+.banner h2{margin:0 0 4px}.banner p{margin:0;font-size:.88rem}
+.t-ok{background:#f0fdf4;border-color:#bbf7d0}.t-ok h2{color:var(--gd)}
+.t-mid{background:#fffbeb;border-color:#fde68a}.t-mid h2{color:var(--amb)}
+.t-bad{background:#fef2f2;border-color:#fecaca}.t-bad h2{color:var(--red)}
+.head{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--bd);padding-bottom:10px}
+.rev{padding:14px 0;border-bottom:1px solid var(--bd)}.rev:last-child{border:0}
+.rev .top{display:flex;justify-content:space-between;font-weight:600;font-size:.9rem}
+.rev p{margin:4px 0 8px;font-size:.88rem;color:#374151}
+.badge{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:6px}
+.badge.asli{background:#dcfce7;color:var(--gd)}.badge.palsu{background:#fee2e2;color:var(--red)}
+.pager{display:flex;justify-content:center;gap:16px;align-items:center;margin-top:14px;font-size:.9rem}
+.box{background:#f3f4f6;border-radius:8px;padding:12px 14px;font-size:.92rem}
+.hl{line-height:2.3;font-size:1rem}.hl span{padding:2px 3px;border-radius:4px}
+.note{border-left:3px solid var(--bd);background:#f9fafb;padding:10px 14px;font-size:.82rem;color:var(--mu);margin:14px 0}
+.legend{display:flex;gap:18px;font-size:.8rem;color:var(--mu);margin-bottom:12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.contrib{display:grid;grid-template-columns:120px 1fr 70px;gap:10px;align-items:center;font-size:.85rem;margin:6px 0}
+.bar{height:10px;border-radius:5px}
+ol.steps{padding-left:20px}ol.steps li{margin-bottom:12px}
+table.t{width:100%;border-collapse:collapse;font-size:.9rem}
+table.t td,table.t th{padding:8px;border-bottom:1px solid var(--bd);text-align:left}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:2rem}}

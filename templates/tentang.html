@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Tentang Sistem · ReviewInsight{% endblock %}
+{% block content %}
+<h1>Tentang Sistem</h1>
+<p class="sub">ReviewInsight dikembangkan sebagai bagian dari penelitian skripsi Program Studi Teknik Informatika, Universitas Tarumanagara.</p>
+
+<div class="card">
+  <h2>Latar Belakang</h2>
+  <p>Ulasan produk memengaruhi keputusan pembelian di e-commerce, tetapi tidak semua ulasan ditulis secara jujur. Penelitian ini berjudul <i>"Analisis Ulasan pada E-Commerce Tokopedia Menggunakan IndoBERT dengan Pendekatan Explainable Artificial Intelligence (SHAP)"</i>. Sistem ini membantu pengguna mengenali ulasan asli dan palsu, serta memahami alasan di balik setiap klasifikasi.</p>
+</div>
+
+<div class="card">
+  <h2>Cara Kerja Sistem</h2>
+  <ol class="steps">
+    <li><b>Pengambilan ulasan</b> dari Tokopedia berdasarkan ID Produk.</li>
+    <li><b>Preprocessing</b>: pembersihan teks, case folding, normalisasi kata tidak baku, dan penyaringan ulasan yang terlalu pendek.</li>
+    <li><b>Klasifikasi</b> setiap ulasan sebagai asli atau palsu menggunakan model IndoBERT hasil fine-tuning.</li>
+    <li><b>Interpretasi</b> hasil klasifikasi dengan SHAP untuk melihat kontribusi tiap kata.</li>
+    <li><b>Skor dan rekomendasi</b> pembelian berdasarkan proporsi ulasan asli.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>Teknologi</h2>
+  <table class="t">
+    <tr><td>Model bahasa</td><td>IndoBERT (indobenchmark/indobert-base-p1)</td></tr>
+    <tr><td>Explainable AI</td><td>SHAP</td></tr>
+    <tr><td>Backend &amp; tampilan</td><td>Python, Flask, Jinja2</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Batasan Sistem</h2>
+  <ul>
+    <li>Model dilatih dari data ulasan yang dilabeli dengan aturan (rule-based) dan divalidasi, sehingga kualitas hasil bergantung pada kualitas label tersebut.</li>
+    <li>Jumlah ulasan yang dianalisis dibatasi per produk dan hasil disimpan sementara di memori.</li>
+    <li>Klasifikasi dan skor merupakan perkiraan model, bukan penilaian pasti atas kejujuran penulis ulasan.</li>
+  </ul>
+</div>
+{% endblock %}
