@@ -10,16 +10,17 @@
 
 <div class="stats">
   <div class="stat"><small>Total Ulasan</small><b>{{ n }}</b></div>
-  <div class="stat"><small>Ulasan Asli</small><b class="ok">{{ pa }}%</b></div>
-  <div class="stat"><small>Ulasan Palsu</small><b class="bad">{{ pp }}%</b></div>
-  <div class="stat"><small>Skor Analisis</small><b>{{ data.skor|round|int }}</b></div>
+  <div class="stat"><small>Persentase Ulasan Asli</small><b class="ok">{{ pa }}%</b></div>
+  <div class="stat"><small>Persentase Ulasan Palsu</small><b class="bad">{{ pp }}%</b></div>
+  <div class="stat"><small>Jumlah Ulasan Asli</small><b class="ok">{{ data.jumlah_asli }}</b></div>
+  <div class="stat"><small>Jumlah Ulasan Palsu</small><b class="bad">{{ data.jumlah_palsu }}</b></div>
 </div>
 
 <div class="banner {{ tone }}">
   <h2>{{ '✔' if tone == 't-ok' else '!' }} {{ data.kategori }}</h2>
-  <p>Berdasarkan hasil analisis terhadap {{ n }} ulasan, sebanyak {{ pa }}% ulasan teridentifikasi sebagai ulasan asli dan {{ pp }}% sebagai ulasan palsu. Dengan skor analisis sebesar <b>{{ data.skor|round|int }}</b>, produk termasuk dalam kategori <b>{{ data.kategori }}</b>.</p>
+  <p>Berdasarkan hasil analisis terhadap {{ n }} ulasan, sebanyak {{ pa }}% ulasan teridentifikasi sebagai ulasan asli dan {{ pp }}% sebagai ulasan palsu. Produk termasuk dalam kategori <b>{{ data.kategori }}</b>.</p>
 </div>
-<p class="mu" style="font-size:.8rem;margin:0 0 20px">{{ data.total_scraped }} ulasan diambil; {{ data.removed|length }} dilewati karena kurang dari {{ min_words }} kata setelah preprocessing.</p>
+<p class="mu" style="font-size:.8rem;margin:0 0 20px">{{ data.total_scraped }} ulasan diambil, {{ data.removed|length }} dilewati karena kurang dari {{ min_words }} kata setelah ulasan diproses.</p>
 
 <div class="card">
   <div class="head">

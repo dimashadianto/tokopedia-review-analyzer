@@ -2,7 +2,6 @@
 {% block title %}Detail Interpretasi SHAP · ReviewInsight{% endblock %}
 {% block content %}
 {% set s = review.shap %}
-{% set tp = s.target_label == 'palsu' %}
 {% set pr = review.prob_palsu if review.label == 'palsu' else review.prob_asli %}
 <a href="{{ url_for('hasil', pid=pid) }}" style="font-size:.85rem">← Kembali ke Hasil Analisis</a>
 <h1 style="margin-top:12px">Detail Interpretasi SHAP</h1>
@@ -13,23 +12,26 @@
   <div class="box">{{ review.review_text }}</div>
 
   <h2 style="margin-top:22px">Kata yang Dianalisis</h2>
-  <div class="hl">{% for t in s.tokens %}{% set pal = (t.value > 0) == tp %}<span style="background:rgba({{ '220,38,38' if pal else '22,163,74' }},{{ (t.value|abs / max_abs * 0.85)|round(2) }})" title="{{ '%+.4f'|format(t.value) }}">{{ t.token }}</span> {% endfor %}</div>
+  <div class="shap-plot">{{ s.html|safe }}</div>
 
   <div class="note"><b>Catatan:</b> Intensitas warna menunjukkan besar kontribusi kata terhadap klasifikasi ulasan. Warna merah menunjukkan kontribusi terhadap klasifikasi PALSU, sedangkan warna hijau menunjukkan kontribusi terhadap klasifikasi ASLI. Semakin pekat warna, semakin besar kontribusinya.</div>
-  <div class="legend"><span><i style="background:#fca5a5"></i>Mendorong prediksi PALSU</span><span><i style="background:#86efac"></i>Mendorong prediksi ASLI</span></div>
+  <div class="legend">
+    <span><i style="background:var(--red)"></i>Mendorong prediksi PALSU</span>
+    <span><i style="background:var(--g)"></i>Mendorong prediksi ASLI</span>
+  </div>
   <span class="badge {{ review.label }}">{{ review.label|upper }}</span>
   <span class="mu" style="margin-left:8px">Probabilitas prediksi <b style="color:var(--tx)">{{ '%.0f'|format(pr * 100) }}%</b></span>
 </div>
 
 <div class="card">
   <h2>Kata dengan Kontribusi Terbesar</h2>
-  {% for t in top_tokens %}{% set pal = (t.value > 0) == tp %}
+  {% for t in top_tokens %}{% set pal = t.value > 0 %}
   <div class="contrib">
     <span>{{ t.token }}</span>
-    <div><div class="bar" style="width:{{ (t.value|abs / max_abs * 100)|round(1) }}%;background:{{ '#f87171' if pal else '#4ade80' }}"></div></div>
+    <div><div class="bar" style="width:{{ (t.value|abs / max_abs * 100)|round(1) }}%;background:{{ 'var(--red)' if pal else 'var(--g)' }}"></div></div>
     <span class="mu">{{ '%+.3f'|format(t.value) }}</span>
   </div>
   {% endfor %}
-  <p class="mu" style="font-size:.8rem;margin:14px 0 0">Nilai dasar ({{ s.target_label|upper }}): {{ '%.3f'|format(s.base_value) }} + jumlah kontribusi seluruh kata = {{ '%.3f'|format(s.output_value) }} (probabilitas {{ s.target_label|upper }}).</p>
+  <p class="mu" style="font-size:.8rem;margin:14px 0 0">Nilai dasar (PALSU): {{ '%.3f'|format(s.base_value) }} + jumlah kontribusi seluruh kata = {{ '%.3f'|format(s.output_value) }} (probabilitas PALSU).</p>
 </div>
 {% endblock %}

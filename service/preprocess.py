@@ -27,13 +27,11 @@ SLANG_DICTIONARY = load_slang_dictionary(SLANG_PATH)
 def _is_empty(text):
     return text is None or (isinstance(text, float) and text != text)
 
-
 def remove_review_prefix(text):
     if _is_empty(text):
         return ""
 
     return PREFIX_PATTERN.sub("", str(text).strip())
-
 
 def clean_review_text(text):
     text = remove_review_prefix(text)
@@ -44,10 +42,8 @@ def clean_review_text(text):
 
     return re.sub(r"\s+", " ", text).strip()
 
-
 def apply_case_folding(text):
     return text.lower().strip()
-
 
 def normalize_slang(text):
     return " ".join(

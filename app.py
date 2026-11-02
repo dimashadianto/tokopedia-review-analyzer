@@ -13,7 +13,7 @@ from flask import (
 from config import MIN_WORDS, MAX_PAGES
 from service.model import explain_review, predict_batch
 from service.preprocess import split_reviews
-from service.scraper import MAX_PAGES, PAGE_LIMIT, ScraperError, fetch_reviews
+from service.scraper import PAGE_LIMIT, ScraperError, fetch_reviews
 from store import TTL_SECONDS, get_result, save_result
 
 app = Flask(__name__)
@@ -84,7 +84,6 @@ def analisis():
 
     return redirect(url_for("hasil", pid=pid))
 
-
 @app.get("/hasil/<pid>")
 def hasil(pid):
     data = get_result(pid)
@@ -111,7 +110,6 @@ def hasil(pid):
         total_pages=total_pages,
         min_words=MIN_WORDS,
     )
-
 
 @app.get("/detail/<pid>/<int:idx>")
 def detail(pid, idx):
@@ -144,7 +142,6 @@ def detail(pid, idx):
         max_abs=max_abs,
     )
 
-
 @app.get("/panduan")
 def panduan():
     return render_template(
@@ -154,11 +151,9 @@ def panduan():
         max_reviews=MAX_PAGES * PAGE_LIMIT,
     )
 
-
 @app.get("/tentang")
 def tentang():
     return render_template("tentang.html")
-
 
 if __name__ == "__main__":
     app.run(debug=True, use_reloader=False, threaded=True)

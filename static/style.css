@@ -22,7 +22,7 @@ input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--bd);border-
 .btn:disabled{opacity:.6;cursor:wait}.btn.full{width:100%}
 .btn.out{background:#fff;color:var(--g);border:1px solid var(--g);padding:5px 12px;font-size:.8rem;font-weight:500}
 .flash{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:.9rem}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin:20px 0}
 .stat{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .stat small{color:var(--mu);font-size:.78rem}.stat b{display:block;font-size:1.8rem}
 .ok{color:var(--g)}.bad{color:var(--red)}
@@ -48,4 +48,5 @@ input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--bd);border-
 ol.steps{padding-left:20px}ol.steps li{margin-bottom:12px}
 table.t{width:100%;border-collapse:collapse;font-size:.9rem}
 table.t td,table.t th{padding:8px;border-bottom:1px solid var(--bd);text-align:left}
+.shap-plot{overflow-x:auto;text-align:center;margin:8px 0}
 @media(max-width:760px){.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:2rem}}
