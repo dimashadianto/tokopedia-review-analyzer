@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% block title %}Panduan · ReviewInsight{% endblock %}
 {% block content %}
@@ -7,12 +8,28 @@
 <div class="card">
   <h2>Cara Menggunakan</h2>
   <ol class="steps">
-    <li><b>Siapkan ID Produk.</b> ID Produk adalah angka unik milik setiap produk di Tokopedia (contoh: 100724886145).
-      <!-- TODO: tambahkan cara menemukan ID Produk di Tokopedia -->
+    <li>
+      <b>Buka halaman produk di Tokopedia.</b>
+      Cari produk yang ingin dianalisis, kemudian salin link atau URL produk tersebut dari browser atau aplikasi Tokopedia.
     </li>
-    <li><b>Masukkan ID Produk di Beranda</b>, lalu klik <b>Analisis</b>. Sistem mengambil hingga {{ max_reviews }} ulasan, sehingga prosesnya dapat memakan waktu. Jangan menutup halaman sampai hasil muncul.</li>
-    <li><b>Baca ringkasan hasil.</b> Halaman hasil menampilkan jumlah ulasan, persentase ulasan asli dan palsu, skor analisis, serta kategori rekomendasi.</li>
-    <li><b>Lihat interpretasi SHAP.</b> Pada daftar ulasan, klik <b>Lihat Interpretasi SHAP</b> untuk mengetahui kata mana yang paling memengaruhi klasifikasi suatu ulasan.</li>
+    <li>
+      <b>Masukkan link produk.</b>
+      Tempelkan link produk Tokopedia pada kolom yang tersedia di halaman Beranda.
+      Pastikan link mengarah ke halaman produk yang benar.
+    </li>
+    <li>
+      <b>Klik Analisis.</b>
+      Sistem akan mengambil hingga {{ max_reviews }} ulasan dari produk tersebut dan melakukan klasifikasi ulasan.
+      Proses analisis dapat memakan waktu. Jangan menutup halaman sampai hasil muncul.
+    </li>
+    <li>
+      <b>Baca ringkasan hasil.</b>
+      Halaman hasil menampilkan jumlah ulasan, persentase ulasan asli dan palsu, skor analisis, serta kategori rekomendasi.
+    </li>
+    <li>
+      <b>Lihat interpretasi SHAP.</b>
+      Pada daftar ulasan, klik <b>Lihat Interpretasi SHAP</b> untuk mengetahui kata mana yang paling memengaruhi klasifikasi suatu ulasan.
+    </li>
   </ol>
 </div>
 

@@ -1,7 +1,9 @@
+import re
 import time
 import requests
-from datetime import datetime, timedelta, timezone
 from config import MAX_PAGES
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse
 
 URL = "https://gql.tokopedia.com/graphql"
 
@@ -54,6 +56,47 @@ query productReviewList(
 
 class ScraperError(Exception):
     """Error saat mengambil ulasan; pesannya aman ditampilkan ke pengguna."""
+
+_ID_AT_END = re.compile(r"-(\d{8,})$")
+
+def extract_product_id(user_input):
+    text = (user_input or "").strip()
+
+    if not text:
+        raise ScraperError("Tautan produk belum diisi.")
+
+    if text.isdigit():
+        return text
+
+    if "://" not in text:
+        text = "https://" + text
+
+    try:
+        parsed = urlparse(text)
+        host = (parsed.hostname or "").lower()
+    except ValueError:
+        raise ScraperError("Tautan tidak valid.")
+
+    if host != "tokopedia.com" and not host.endswith(".tokopedia.com"):
+        raise ScraperError("Tautan harus berasal dari tokopedia.com.")
+
+    segments = [s for s in parsed.path.split("/") if s]
+
+    if len(segments) < 2:
+        raise ScraperError(
+            "Tautan ini bukan halaman produk. Buka halaman produk di Tokopedia, "
+            "lalu salin tautan dari kolom alamat peramban."
+        )
+
+    match = _ID_AT_END.search(segments[1])
+
+    if not match:
+        raise ScraperError(
+            "ID produk tidak ditemukan di tautan ini. Pastikan tautan disalin dari "
+            "kolom alamat browser saat halaman produk terbuka."
+        )
+
+    return match.group(1)
 
 def _build_payload(product_id, page):
     return [
@@ -129,7 +172,7 @@ def _fetch_page(session, product_id, page):
     if result is None:
         raise ScraperError(
             "Produk tidak ditemukan atau tidak memiliki ulasan. "
-            "Periksa kembali ID Produk yang dimasukkan."
+            "Periksa kembali tautan produk yang dimasukkan."
         )
 
     return result

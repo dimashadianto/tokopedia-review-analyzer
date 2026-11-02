@@ -13,7 +13,7 @@ from flask import (
 from config import MIN_WORDS, MAX_PAGES
 from service.model import explain_review, predict_batch
 from service.preprocess import split_reviews
-from service.scraper import PAGE_LIMIT, ScraperError, fetch_reviews
+from service.scraper import PAGE_LIMIT, ScraperError, extract_product_id, fetch_reviews
 from store import TTL_SECONDS, get_result, save_result
 
 app = Flask(__name__)
@@ -41,13 +41,10 @@ def index():
 
 @app.post("/analisis")
 def analisis():
-    pid = request.form.get("product_id", "").strip()
-
-    if not pid.isdigit():
-        flash("Product ID harus berupa angka.")
-        return redirect(url_for("index"))
+    link = request.form.get("product_link", "").strip()
 
     try:
+        pid = extract_product_id(link)
         reviews = fetch_reviews(pid)
     except ScraperError as e:
         flash(str(e))

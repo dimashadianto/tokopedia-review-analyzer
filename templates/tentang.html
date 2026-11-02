@@ -6,17 +6,19 @@
 
 <div class="card">
   <h2>Latar Belakang</h2>
-  <p>Ulasan produk memengaruhi keputusan pembelian di e-commerce, tetapi tidak semua ulasan ditulis secara jujur. Penelitian ini berjudul <i>"Analisis Ulasan pada E-Commerce Tokopedia Menggunakan IndoBERT dengan Pendekatan Explainable Artificial Intelligence (SHAP)"</i>. Sistem ini membantu pengguna mengenali ulasan asli dan palsu, serta memahami alasan di balik setiap klasifikasi.</p>
+  <p>Ulasan produk memengaruhi keputusan pembelian di e-commerce, tetapi tidak semua ulasan ditulis secara jujur. Penelitian ini berjudul <i>"Analisis Ulasan pada E-Commerce Tokopedia Menggunakan IndoBERT dengan Pendekatan Explainable Artificial Intelligence (SHAP)"</i>. Sistem ini membantu pengguna mengenali ulasan yang terindikasi asli dan palsu, serta memahami faktor yang memengaruhi hasil klasifikasi.</p>
 </div>
 
 <div class="card">
   <h2>Cara Kerja Sistem</h2>
   <ol class="steps">
-    <li><b>Pengambilan ulasan</b> dari Tokopedia berdasarkan ID Produk.</li>
+    <li><b>Input URL produk</b> dengan memasukkan atau menempelkan link produk Tokopedia yang ingin dianalisis.</li>
+    <li><b>Ekstraksi ID Produk</b> dari URL produk untuk memperoleh identitas produk yang digunakan dalam proses pengambilan ulasan.</li>
+    <li><b>Pengambilan ulasan</b> dari Tokopedia berdasarkan ID Produk yang telah diperoleh.</li>
     <li><b>Preprocessing</b>: pembersihan teks, case folding, normalisasi kata tidak baku, dan penyaringan ulasan yang terlalu pendek.</li>
     <li><b>Klasifikasi</b> setiap ulasan sebagai asli atau palsu menggunakan model IndoBERT hasil fine-tuning.</li>
-    <li><b>Interpretasi</b> hasil klasifikasi dengan SHAP untuk melihat kontribusi tiap kata.</li>
-    <li><b>Skor dan rekomendasi</b> pembelian berdasarkan proporsi ulasan asli.</li>
+    <li><b>Interpretasi</b> hasil klasifikasi menggunakan SHAP untuk melihat kontribusi setiap kata terhadap prediksi model.</li>
+    <li><b>Skor dan rekomendasi</b> berdasarkan proporsi ulasan yang diklasifikasikan sebagai asli.</li>
   </ol>
 </div>
 
@@ -32,9 +34,9 @@
 <div class="card">
   <h2>Batasan Sistem</h2>
   <ul>
-    <li>Model dilatih dari data ulasan yang dilabeli dengan aturan (rule-based) dan divalidasi, sehingga kualitas hasil bergantung pada kualitas label tersebut.</li>
-    <li>Jumlah ulasan yang dianalisis dibatasi per produk dan hasil disimpan sementara di memori.</li>
-    <li>Klasifikasi dan skor merupakan perkiraan model, bukan penilaian pasti atas kejujuran penulis ulasan.</li>
+    <li>Model dilatih menggunakan data ulasan yang dilabeli dengan pendekatan rule-based dan divalidasi, sehingga kualitas hasil klasifikasi bergantung pada kualitas data dan label pelatihan.</li>
+    <li>Jumlah ulasan yang dianalisis dibatasi untuk setiap produk dan hasil analisis disimpan sementara di memori.</li>
+    <li>Hasil klasifikasi dan skor merupakan estimasi model, bukan penilaian pasti atas kejujuran penulis ulasan.</li>
   </ul>
 </div>
 {% endblock %}
