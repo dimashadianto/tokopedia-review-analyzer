@@ -85,7 +85,7 @@ def extract_product_id(user_input):
     if len(segments) < 2:
         raise ScraperError(
             "Tautan ini bukan halaman produk. Buka halaman produk di Tokopedia, "
-            "lalu salin tautan dari kolom alamat peramban."
+            "lalu salin tautan dari kolom alamat browser."
         )
 
     match = _ID_AT_END.search(segments[1])

@@ -1,6 +1,6 @@
 __pycache__/
 *__pycache__/
 *.pyc
-model/indobert-review/
+model/
 training/result/
-training/data/list_id_product.txt
+training/data/list_product_testing.txt

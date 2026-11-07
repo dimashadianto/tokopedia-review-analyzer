@@ -22,6 +22,7 @@ from config import (
     MODEL_RESULT_PATH,
     MIN_WORDS,
     TEST_RESULT_PATH,
+    CONFUSION_MATRIX_PATH,
 )
 
 MODEL_NAME = "indobenchmark/indobert-base-p1"
@@ -256,15 +257,36 @@ cm = confusion_matrix(
 
 print("Confusion Matrix:\n", cm)
 
-ConfusionMatrixDisplay(
-    cm,
+disp = ConfusionMatrixDisplay(
+    confusion_matrix=cm,
     display_labels=["Palsu", "Asli"],
-).plot()
+)
+
+disp.plot(cmap="Blues")
 
 plt.title("Confusion Matrix IndoBERT")
+
 plt.tight_layout()
+
+CONFUSION_MATRIX_PATH.parent.mkdir(
+    parents=True,
+    exist_ok=True,
+)
+
+plt.savefig(
+    CONFUSION_MATRIX_PATH,
+    dpi=300,
+    bbox_inches="tight",
+)
+
 plt.show()
 
+plt.close()
+
+print(
+    "Confusion Matrix disimpan:",
+    CONFUSION_MATRIX_PATH,
+)
 
 MODEL_RESULT_PATH.mkdir(
     parents=True,

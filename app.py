@@ -10,7 +10,7 @@ from flask import (
     request,
     url_for,
 )
-from config import MIN_WORDS, MAX_PAGES
+from config import MIN_WORDS, MAX_PAGES, PER_PAGE_OPTIONS
 from service.model import explain_review, predict_batch
 from service.preprocess import split_reviews
 from service.scraper import PAGE_LIMIT, ScraperError, extract_product_id, fetch_reviews
@@ -90,11 +90,16 @@ def hasil(pid):
         return redirect(url_for("index"))
 
     total = len(data["kept"])
-    total_pages = max(1, math.ceil(total / MAX_PAGES))
+
+    per_page = request.args.get("per_page", 10, type=int)
+    if per_page not in PER_PAGE_OPTIONS:
+        per_page = 10
+
+    total_pages = max(1, math.ceil(total / per_page))
     page = min(max(request.args.get("page", 1, type=int), 1), total_pages)
 
-    start = (page - 1) * MAX_PAGES
-    end = min(start + MAX_PAGES, total)
+    start = (page - 1) * per_page
+    end = min(start + per_page, total)
 
     items = [(i, data["kept"][i]) for i in range(start, end)]
 
@@ -103,7 +108,9 @@ def hasil(pid):
         pid=pid,
         data=data,
         items=items,
+        n=total,
         page=page,
+        per_page=per_page,
         total_pages=total_pages,
         min_words=MIN_WORDS,
     )

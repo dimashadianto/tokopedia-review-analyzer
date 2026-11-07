@@ -1,42 +1,44 @@
 {% extends "base.html" %}
 {% block title %}Tentang Sistem · ReviewInsight{% endblock %}
 {% block content %}
-<h1>Tentang Sistem</h1>
-<p class="sub">ReviewInsight dikembangkan sebagai bagian dari penelitian skripsi Program Studi Teknik Informatika, Universitas Tarumanagara.</p>
-
-<div class="card">
-  <h2>Latar Belakang</h2>
-  <p>Ulasan produk memengaruhi keputusan pembelian di e-commerce, tetapi tidak semua ulasan ditulis secara jujur. Penelitian ini berjudul <i>"Analisis Ulasan pada E-Commerce Tokopedia Menggunakan IndoBERT dengan Pendekatan Explainable Artificial Intelligence (SHAP)"</i>. Sistem ini membantu pengguna mengenali ulasan yang terindikasi asli dan palsu, serta memahami faktor yang memengaruhi hasil klasifikasi.</p>
-</div>
-
-<div class="card">
-  <h2>Cara Kerja Sistem</h2>
-  <ol class="steps">
-    <li><b>Input URL produk</b> dengan memasukkan atau menempelkan link produk Tokopedia yang ingin dianalisis.</li>
-    <li><b>Ekstraksi ID Produk</b> dari URL produk untuk memperoleh identitas produk yang digunakan dalam proses pengambilan ulasan.</li>
-    <li><b>Pengambilan ulasan</b> dari Tokopedia berdasarkan ID Produk yang telah diperoleh.</li>
-    <li><b>Preprocessing</b>: pembersihan teks, case folding, normalisasi kata tidak baku, dan penyaringan ulasan yang terlalu pendek.</li>
-    <li><b>Klasifikasi</b> setiap ulasan sebagai asli atau palsu menggunakan model IndoBERT hasil fine-tuning.</li>
-    <li><b>Interpretasi</b> hasil klasifikasi menggunakan SHAP untuk melihat kontribusi setiap kata terhadap prediksi model.</li>
-    <li><b>Skor dan rekomendasi</b> berdasarkan proporsi ulasan yang diklasifikasikan sebagai asli.</li>
-  </ol>
-</div>
-
-<div class="card">
-  <h2>Teknologi</h2>
-  <table class="t">
-    <tr><td>Model bahasa</td><td>IndoBERT (indobenchmark/indobert-base-p1)</td></tr>
-    <tr><td>Explainable AI</td><td>SHAP</td></tr>
-    <tr><td>Backend &amp; tampilan</td><td>Python, Flask, Jinja2</td></tr>
-  </table>
-</div>
-
-<div class="card">
-  <h2>Batasan Sistem</h2>
-  <ul>
-    <li>Model dilatih menggunakan data ulasan yang dilabeli dengan pendekatan rule-based dan divalidasi, sehingga kualitas hasil klasifikasi bergantung pada kualitas data dan label pelatihan.</li>
-    <li>Jumlah ulasan yang dianalisis dibatasi untuk setiap produk dan hasil analisis disimpan sementara di memori.</li>
-    <li>Hasil klasifikasi dan skor merupakan estimasi model, bukan penilaian pasti atas kejujuran penulis ulasan.</li>
-  </ul>
+<div class="narrow">
+  <h1>Tentang Sistem</h1>
+  <p class="sub">ReviewInsight dikembangkan sebagai bagian dari penelitian skripsi Program Studi Teknik Informatika, Universitas Tarumanagara.</p>
+  
+  <div class="card">
+    <h2>Latar Belakang</h2>
+    <p>Ulasan produk memengaruhi keputusan pembelian di e-commerce, tetapi tidak semua ulasan ditulis secara jujur. Penelitian ini berjudul <i>"Analisis Ulasan pada E-Commerce Tokopedia Menggunakan IndoBERT dengan Pendekatan Explainable Artificial Intelligence (SHAP)"</i>. Sistem ini membantu pengguna mengenali ulasan yang terindikasi asli dan palsu, serta memahami faktor yang memengaruhi hasil klasifikasi.</p>
+  </div>
+  
+  <div class="card">
+    <h2>Cara Kerja Sistem</h2>
+    <ol class="steps">
+      <li><b>Input tautan, link, atau URL produk</b> dengan memasukkan atau menempelkan tautan produk Tokopedia yang ingin dianalisis.</li>
+      <li><b>Ekstraksi ID Produk</b> dari tautan produk untuk memperoleh identitas produk yang digunakan dalam proses pengambilan ulasan.</li>
+      <li><b>Pengambilan ulasan</b> dari Tokopedia berdasarkan ID Produk yang telah diperoleh.</li>
+      <li><b>Preprocessing</b>: pembersihan teks, case folding, normalisasi kata tidak baku, dan penyaringan ulasan yang terlalu pendek.</li>
+      <li><b>Klasifikasi</b> setiap ulasan sebagai asli atau palsu menggunakan model IndoBERT hasil fine-tuning.</li>
+      <li><b>Interpretasi</b> hasil klasifikasi menggunakan SHAP untuk melihat kontribusi setiap kata terhadap prediksi model.</li>
+      <li><b>Skor dan rekomendasi</b> berdasarkan proporsi ulasan yang diklasifikasikan sebagai asli.</li>
+    </ol>
+  </div>
+  
+  <div class="card">
+    <h2>Teknologi</h2>
+    <table class="t">
+      <tr><td>Model bahasa</td><td>IndoBERT (indobenchmark/indobert-base-p1)</td></tr>
+      <tr><td>Explainable AI</td><td>SHAP</td></tr>
+      <tr><td>Backend &amp; tampilan</td><td>Python, Flask, Jinja2</td></tr>
+    </table>
+  </div>
+  
+  <div class="card">
+    <h2>Batasan Sistem</h2>
+    <ul>
+      <li>Model dilatih menggunakan data ulasan yang dilabeli dengan pendekatan rule-based dan divalidasi, sehingga kualitas hasil klasifikasi bergantung pada kualitas data dan label pelatihan.</li>
+      <li>Jumlah ulasan yang dianalisis dibatasi untuk setiap produk dan hasil analisis disimpan sementara di memori.</li>
+      <li>Hasil klasifikasi dan skor merupakan estimasi model, bukan penilaian pasti atas kejujuran penulis ulasan.</li>
+    </ul>
+  </div>
 </div>
 {% endblock %}

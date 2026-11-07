@@ -1,27 +1,57 @@
 {% extends "base.html" %}
+{% block main_class %}center{% endblock %}
 {% block content %}
-<section class="hero">
-  <div>
-    <h1>Analisis Ulasan Produk <span>Tokopedia</span></h1>
-    <p class="sub">Sistem menganalisis ulasan produk menggunakan IndoBERT untuk mengidentifikasi ulasan asli dan palsu. Hasil klasifikasi kemudian diinterpretasikan menggunakan SHAP dan digunakan sebagai dasar dalam menentukan rekomendasi keputusan pembelian.</p>
-    <div class="chips">
-      {% for c in ['IndoBERT', 'SHAP', 'Klasifikasi Ulasan', 'Skor Analisis', 'Rekomendasi Pembelian'] %}<span class="chip">{{ c }}</span>{% endfor %}
+<div class="narrow">
+  <section class="hero">
+    <div>
+      <h1>Analisis Ulasan Produk <span>Tokopedia</span></h1>
+      <p class="sub">Sistem menganalisis ulasan produk menggunakan IndoBERT untuk mengidentifikasi ulasan asli dan
+        palsu.
+        Hasil klasifikasi kemudian diinterpretasikan menggunakan SHAP dan digunakan sebagai dasar dalam menentukan
+        rekomendasi keputusan pembelian.</p>
+      <div class="chips">
+        {% for c in ['IndoBERT', 'SHAP', 'Klasifikasi Ulasan', 'Skor Analisis', 'Rekomendasi Pembelian'] %}<span
+          class="chip">{{ c }}</span>{% endfor %}
+      </div>
     </div>
-  </div>
-  <form class="card" method="post" action="{{ url_for('analisis') }}" id="form">
-    <h2>Mulai Analisis</h2>
-    <p class="sub">Tempel tautan halaman produk Tokopedia untuk mengambil dan menganalisis ulasannya.</p>
-    <label for="link">Tautan Produk Tokopedia</label>
-    <input type="text" id="link" name="product_link" required
-          placeholder="Masukkan Tautan"
-          autocomplete="off">
-    <button class="btn full" id="btn" type="submit">Analisis</button>
-    <p class="mu" style="font-size:.75rem;text-align:center;margin:12px 0 0">Salin tautan dari kolom alamat peramban saat halaman produk terbuka. Lihat halaman <a href="{{ url_for('panduan') }}">Panduan</a>.</p>
-  </form>
-</section>
+
+    <form class="card" method="post" action="{{ url_for('analisis') }}" id="form">
+      <h2>Mulai Analisis</h2>
+      <p class="sub">
+        Tempel tautan halaman produk Tokopedia untuk mengambil dan menganalisis ulasannya.
+      </p>
+      <label for="link">Tautan Produk Tokopedia</label>
+      <input type="text" id="link" name="product_link" placeholder="https://www.tokopedia.com/..." autocomplete="off">
+      <button class="btn full" id="btn" type="submit">
+        Analisis
+      </button>
+    </form>
+
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-card">
+        <div class="loading-spinner"></div>
+        <h2>Sedang Menganalisis Ulasan</h2>
+      </div>
+    </div>
+  </section>
+</div>
 <script>
-document.getElementById('form').addEventListener('submit', function () {
-  var b = document.getElementById('btn'); b.disabled = true; b.textContent = 'Menganalisis… mohon tunggu';
-});
+  (function () {
+    const form = document.getElementById('form')
+    const btn = document.getElementById('btn')
+    const overlay = document.getElementById('loadingOverlay')
+
+    form.addEventListener('submit', function (e) {
+      if (!form.checkValidity()) return
+      if (btn.disabled) {
+        e.preventDefault()
+        return
+      }
+
+      overlay.classList.add('show')
+      document.body.classList.add('loading-active')
+      btn.disabled = true
+    })
+  })()
 </script>
 {% endblock %}
