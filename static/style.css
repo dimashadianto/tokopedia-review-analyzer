@@ -385,15 +385,6 @@ input[type=text] {
     vertical-align: -1px
 }
 
-.contrib {
-    display: grid;
-    grid-template-columns: 120px 1fr 70px;
-    gap: 10px;
-    align-items: center;
-    font-size: .85rem;
-    margin: 6px 0
-}
-
 .bar {
     height: 10px;
     border-radius: 5px
@@ -418,6 +409,110 @@ table.t th {
     padding: 8px;
     border-bottom: 1px solid var(--bd);
     text-align: left
+}
+
+.tabbar {
+    display: flex;
+    gap: 24px;
+    margin: -16px 0 0;
+}
+
+.tabbtn {
+    font: inherit;
+    font-size: .9rem;
+    padding: 12px 4px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--mu);
+    border: 0;
+    border-radius: 0;
+}
+
+.tabbtn:hover {
+    color: var(--g);
+}
+
+.tabbtn[aria-selected=true] {
+    color: var(--g);
+    border-bottom: 2px solid var(--g);
+    font-weight: 600;
+    background: transparent;
+}
+
+.tabbtn:focus-visible {
+    outline: 2px solid var(--g);
+    outline-offset: 3px;
+}
+
+.kata {
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 4px;
+    display: inline-block;
+    line-height: 1.9
+}
+
+.chipk {
+    font-size: .75rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-block
+}
+
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .85rem
+}
+
+.tbl th,
+.tbl td {
+    text-align: left;
+    padding: 8px 5px;
+    border-bottom: 1px solid color-mix(in srgb, var(--tx) 10%, transparent);
+    font-weight: 400
+}
+
+.tbl th {
+    font-size: .75rem;
+    opacity: .7
+}
+
+.stat-shap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 6px
+}
+
+.stat-shap div {
+    background: color-mix(in srgb, var(--tx) 5%, transparent);
+    border-radius: 8px;
+    padding: 10px 12px
+}
+
+.stat-shap small {
+    display: block;
+    font-size: .75rem;
+    opacity: .7
+}
+
+.stat-shap b {
+    font-size: 1.2rem;
+    font-weight: 500
+}
+
+.prob-label {
+    font-weight: 600;
+    color: var(--tx)
+}
+
+.shap-empty {
+    padding: 16px;
+    background: color-mix(in srgb, var(--tx) 5%, transparent);
+    border-radius: 8px;
+    font-size: .85rem
 }
 
 .shap-plot {

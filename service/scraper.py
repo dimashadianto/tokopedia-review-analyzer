@@ -4,6 +4,7 @@ import requests
 from config import MAX_PAGES
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
+import html
 
 URL = "https://gql.tokopedia.com/graphql"
 
@@ -124,6 +125,13 @@ def _to_wib_string(value):
     except (TypeError, ValueError, OverflowError, OSError):
         return None
 
+
+def _unescape_text(value):
+    if not isinstance(value, str):
+        return value
+
+    return html.unescape(value)
+
 def _parse_review(x, product_id):
     user = x.get("user") or {}
     like = x.get("likeDislike") or {}
@@ -138,7 +146,7 @@ def _parse_review(x, product_id):
         "review_age": x.get("reviewCreateTimestamp"),
         "rating": x.get("productRating"),
         "like_count": like.get("totalLike") or 0,
-        "review_text": x.get("message"),
+        "review_text": _unescape_text(x.get("message")),
         "has_image": bool(x.get("imageAttachments")),
         "has_video": bool(x.get("videoAttachments")),
     }
