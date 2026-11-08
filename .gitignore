@@ -1,0 +1,6 @@
+__pycache__/
+*__pycache__/
+*.pyc
+model/
+training/result/
+training/data/list_product_testing.txt

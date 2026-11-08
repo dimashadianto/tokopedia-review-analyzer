@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block title %}Detail Interpretasi SHAP · ReviewInsight{% endblock %}
+{% block content %}
+{% set s = review.shap %}
+{% set pr = review.prob_palsu if review.label == 'palsu' else review.prob_asli %}
+{% set total = s.output_value - s.base_value %}
+{% set shown = top_tokens|sum(attribute='value') %}
+{% set scale = max_abs if max_abs > 0 else 1 %}
+{% set vals = {} %}
+{% for t in top_tokens %}
+{% set _ = vals.update({t.token|lower: t.value}) %}
+{% endfor %}
+<div class="narrow">
+  <a class="btn out" href="{{ url_for('hasil', pid=pid) }}" style="font-size:.85rem">Kembali ke Hasil Analisis</a>
+  <h1 style="margin-top:10px">Detail Interpretasi SHAP</h1>
+  <p class="sub">Penjelasan kontribusi kata terhadap hasil klasifikasi ulasan menggunakan model IndoBERT.</p>
+
+  <div class="card">
+    <h2>Ulasan yang Dianalisis</h2>
+    <div class="box">{{ review.review_text }}</div>
+  </div>
+
+  <div class="tabbar" role="tablist" aria-label="Jenis interpretasi">
+    <button class="tabbtn" id="tab-ringkasan" role="tab" aria-selected="true"
+      aria-controls="panel-ringkasan">Ringkasan</button>
+    <button class="tabbtn" id="tab-teknis" role="tab" aria-selected="false" aria-controls="panel-teknis">Detail
+      Teknis</button>
+  </div>
+
+  <div id="panel-ringkasan" role="tabpanel" aria-labelledby="tab-ringkasan">
+    <div class="card" style="margin-top:12px">
+      <span>
+        Sistem mengklasifikasikan ulasan ini sebagai
+        <span class="badge {{ review.label }}">{{ review.label|upper }}</span>
+        <span class="prob-label">{{ '%.2f'|format(pr * 100) }}%</span>.
+      </span>
+
+      <h2>Kata yang Memengaruhi Penilaian</h2>
+      <div>
+        {% for w in review.review_text.split() %}
+        {% set key = w|lower|trim('.,!?"') %}
+        {% set v = vals.get(key) %}
+        {% if v is none %}
+        <span class="kata">{{ w }}</span>
+        {% else %}
+        {% set pct = (15 + 45 * (v|abs / scale))|round|int %}
+        <span class="kata"
+          style="background:color-mix(in srgb,{{ 'var(--red)' if v > 0 else 'var(--g)' }} {{ pct }}%,transparent)">{{ w
+          }}</span>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      <div class="legend" style="margin-top:12px">
+        <span><i style="background:var(--red)"></i>Mendorong prediksi PALSU</span>
+        <span><i style="background:var(--g)"></i>Mendorong prediksi ASLI</span>
+      </div>
+
+      {% if top_tokens %}
+      {% set u = top_tokens[0] %}
+      {% set lawan = (top_tokens[1:]|selectattr('value','lt',0)|list) if u.value > 0 else
+      (top_tokens[1:]|selectattr('value','gt',0)|list) %}
+
+      <div class="note" style="margin-top:16px">
+        <b>Interpretasi:</b>
+        Token "{{ u.token }}" memiliki kontribusi terbesar di antara token yang ditampilkan dan mendorong prediksi ke
+        arah
+        <b>{{ 'PALSU' if u.value > 0 else 'ASLI' }}</b>.
+
+        {% if lawan %}
+        Sementara itu, terdapat token lain seperti
+        {% for t in lawan[:3] %}
+        "{{ t.token }}"{% if not loop.last %}, {% endif %}
+        {% endfor %}
+        yang memberikan kontribusi ke arah sebaliknya.
+        {% endif %}
+      </div>
+
+      <h2 style="margin-top:20px">Kontribusi Kata Terbesar</h2>
+      <table class="tbl">
+        <tr>
+          <th>Token</th>
+          <th>Arah Kontribusi</th>
+          <th>Nilai SHAP</th>
+        </tr>
+        {% for t in top_tokens[:5] %}
+        <tr>
+          <td>{{ t.token }}</td>
+          <td>
+            <span class="chipk"
+              style="background:color-mix(in srgb,{{ 'var(--red)' if t.value > 0 else 'var(--g)' }} 20%,transparent)">
+              {{ 'PALSU' if t.value > 0 else 'ASLI' }}
+            </span>
+          </td>
+          <td>{{ '%+.3f'|format(t.value) }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <div class="shap-empty">Tidak tersedia data kontribusi token untuk ulasan ini.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="panel-teknis" role="tabpanel" aria-labelledby="tab-teknis" hidden>
+    <div class="card" style="margin-top:12px">
+      <h2>Ringkasan Nilai SHAP</h2>
+      <div class="stat-shap">
+        <div>
+          <small>Nilai dasar E[f(x)]</small>
+          <b>{{ '%.6f'|format(s.base_value) }}</b>
+        </div>
+
+        <div>
+          <small>Keluaran f(x), PALSU</small>
+          <b>{{ '%.6f'|format(s.output_value) }}</b>
+        </div>
+
+        <div>
+          <small>Jumlah kontribusi SHAP</small>
+          <b>{{ '%+.6f'|format(total) }}</b>
+        </div>
+      </div>
+
+      <h2 style="margin-top:10px">Visualisasi SHAP</h2>
+      <div class="shap-plot">{{ s.html|safe }}</div>
+      <div class="note">
+        <b>Catatan:</b> Warna merah menunjukkan kontribusi yang meningkatkan keluaran kelas PALSU, sedangkan warna hijau
+        menunjukkan kontribusi yang menurunkannya dan mendorong prediksi ASLI. Semakin besar nilai absolut SHAP, semakin
+        besar kontribusinya.
+      </div>
+
+      <div class="legend">
+        <span><i style="background:var(--red)"></i>Mendorong prediksi PALSU</span>
+        <span><i style="background:var(--g)"></i>Mendorong prediksi ASLI</span>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h2>Kontribusi per Token</h2>
+      {% if top_tokens %}
+      <table class="tbl">
+        <tr>
+          <th>#</th>
+          <th>Token</th>
+          <th>Nilai SHAP</th>
+          <th style="width:30%">Kontribusi</th>
+          <th>Arah</th>
+        </tr>
+
+        {% for t in top_tokens %}
+        {% set pal = t.value > 0 %}
+
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ t.token }}</td>
+          <td>{{ '%+.6f'|format(t.value) }}</td>
+          <td>
+            <div class="bar"
+              style="width:{{ (t.value|abs / scale * 100)|round(1) }}%;background:{{ 'var(--red)' if pal else 'var(--g)' }}">
+            </div>
+          </td>
+          <td>{{ 'PALSU' if pal else 'ASLI' }}</td>
+        </tr>
+
+        {% endfor %}
+      </table>
+      {% else %}
+      <div class="shap-empty">Tidak tersedia data kontribusi token.</div>
+      {% endif %}
+
+      <p class="mu" style="font-size:.8rem;margin:14px 0 0">
+        Nilai dasar (PALSU) adalah {{ '%.6f'|format(s.base_value) }} + ({{ '%+.6f'|format(total) }}) = {{
+        '%.6f'|format(s.output_value) }} (keluaran PALSU).
+      </p>
+
+      {% if (shown - total)|abs < 0.000001 %} <p class="mu"
+        style="font-size:.8rem;margin:6px 0 0">
+        Perhitungan lengkapnya =
+        {{ '%.6f'|format(s.base_value) }}
+        {% for t in top_tokens %}
+        {{ '+' if t.value >= 0 else '−' }} {{ '%.6f'|format(t.value|abs) }}
+        {% endfor %}
+        = {{ '%.6f'|format(s.output_value) }}
+        </p>
+        {% else %}
+        <p class="mu" style="font-size:.8rem;margin:6px 0 0">
+          Tabel menampilkan {{ top_tokens|length }} token dengan kontribusi terbesar. Token lainnya tetap berkontribusi
+          terhadap hasil akhir, tetapi tidak ditampilkan dalam tabel.
+        </p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Catatan Interpretasi</h2>
+      <table class="tbl">
+        <tr>
+          <td style="width:150px">Model</td>
+          <td>IndoBERT hasil fine-tuning</td>
+        </tr>
+        <tr>
+          <td>Kelas yang dianalisis</td>
+          <td>PALSU</td>
+        </tr>
+        <tr>
+          <td>Nilai SHAP positif</td>
+          <td>Mendorong prediksi PALSU</td>
+        </tr>
+        <tr>
+          <td>Nilai SHAP negatif</td>
+          <td>Mendorong prediksi ASLI</td>
+        </tr>
+      </table>
+
+      <div class="note" style="margin-top:12px">
+        Nilai SHAP menjelaskan kontribusi setiap token terhadap keluaran model, bukan hubungan sebab-akibat.
+        Interpretasi bergantung pada nilai dasar, metode masking teks, dan representasi token yang digunakan. Satu kata
+        juga dapat dipecah menjadi beberapa subword oleh tokenizer IndoBERT.
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (function () {
+    var tabs = {
+      ringkasan: document.getElementById('tab-ringkasan'),
+      teknis: document.getElementById('tab-teknis')
+    };
+
+    var panels = {
+      ringkasan: document.getElementById('panel-ringkasan'),
+      teknis: document.getElementById('panel-teknis')
+    };
+
+    function show(name) {
+      for (var k in tabs) {
+        var on = k === name;
+        tabs[k].setAttribute('aria-selected', String(on));
+        tabs[k].tabIndex = on ? 0 : -1;
+        panels[k].hidden = !on;
+      }
+
+      history.replaceState(null, '', '#' + name);
+    }
+
+    tabs.ringkasan.addEventListener('click', function () {
+      show('ringkasan');
+    });
+
+    tabs.teknis.addEventListener('click', function () {
+      show('teknis');
+    });
+
+    for (var k in tabs) {
+      tabs[k].addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          var next = e.key === 'ArrowRight' ? 'teknis' : 'ringkasan';
+          tabs[next].focus();
+          show(next);
+        }
+      });
+    }
+
+    show(location.hash === '#teknis' ? 'teknis' : 'ringkasan');
+  })();
+</script>
+{% endblock %}

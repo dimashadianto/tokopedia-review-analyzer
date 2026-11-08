@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}ReviewInsight{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% set ep = request.endpoint %}
+<header class="nav">
+  <a class="brand" href="{{ url_for('index') }}">ReviewInsight</a>
+  <nav>
+    <a class="l {{ 'on' if ep in ('index', 'hasil', 'detail') }}" href="{{ url_for('index') }}">Beranda</a>
+    <a class="l {{ 'on' if ep == 'panduan' }}" href="{{ url_for('panduan') }}">Panduan</a>
+    <a class="l {{ 'on' if ep == 'tentang' }}" href="{{ url_for('tentang') }}">Tentang Sistem</a>
+  </nav>
+</header>
+<main class="{% block main_class %}{% endblock %}">
+  {% for m in get_flashed_messages() %}<div class="flash">{{ m }}</div>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="foot"><b>ReviewInsight</b>© 2026 ReviewInsight. All rights reserved.</footer>
+</body>
+</html>

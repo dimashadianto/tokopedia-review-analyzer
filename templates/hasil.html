@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Hasil Analisis · ReviewInsight{% endblock %}
+{% block main_class %}wide{% endblock %}
+{% block content %}
+{% set n = data.kept|length %}
+{% set pa = (100 * data.jumlah_asli / n)|round(1) %}
+{% set pp = (100 - pa)|round(1) %}
+{% set tone = 't-ok' if data.skor >= 80 else ('t-mid' if data.skor >= 50 else 't-bad') %}
+<div class="narrow">
+  <h1>Hasil Analisis Produk</h1>
+  <p class="sub">Ringkasan hasil klasifikasi ulasan dan rekomendasi keputusan pembelian · ID Produk {{ pid }}</p>
+
+  <div class="stats">
+    <div class="stat"><small>Total Ulasan</small><b>{{ n }}</b></div>
+    <div class="stat"><small>Persentase Ulasan Asli</small><b class="ok">{{ pa }}%</b></div>
+    <div class="stat"><small>Persentase Ulasan Palsu</small><b class="bad">{{ pp }}%</b></div>
+    <div class="stat"><small>Jumlah Ulasan Asli</small><b class="ok">{{ data.jumlah_asli }}</b></div>
+    <div class="stat"><small>Jumlah Ulasan Palsu</small><b class="bad">{{ data.jumlah_palsu }}</b></div>
+  </div>
+
+  <div class="banner {{ tone }}">
+    <h2>{{ '✔' if tone == 't-ok' else '!' }} {{ data.kategori }}</h2>
+    <p>Berdasarkan hasil analisis terhadap {{ n }} ulasan, sebanyak {{ pa }}% ulasan teridentifikasi sebagai ulasan asli
+      dan {{ pp }}% sebagai ulasan palsu. Produk termasuk dalam kategori <b>{{ data.kategori }}</b>.</p>
+  </div>
+  <p class="mu" style="font-size:.8rem;margin:0 0 20px">{{ data.total_scraped }} ulasan diambil, {{ data.removed|length
+    }} dilewati karena kurang dari {{ min_words }} kata setelah ulasan diproses.</p>
+</div>
+
+<div class="card list">
+  <div class="head">
+    <h2 style="margin:0;font-size:1.2rem">Daftar Ulasan</h2>
+    {% if items %}
+    <span class="mu">Menampilkan {{ items[0][0] + 1 }}–{{ items[-1][0] + 1 }} dari {{ n }}
+      ulasan</span>
+    {% endif %}
+  </div>
+
+  <div class="rev-grid">
+    {% for i, r in items %}
+    <div class="rev">
+      <div class="top"><span>{{ r.username or 'Pengguna anonim' }}</span><span class="badge {{ r.label }}">{{
+          r.label|upper }}</span></div>
+      <p>{{ r.review_text }}</p>
+      <a class="btn out shap-link" href="{{ url_for('detail', pid=pid, idx=i) }}">Lihat Interpretasi SHAP</a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="toolbar">
+    <form class="perpage" method="get" action="{{ url_for('hasil', pid=pid) }}">
+      <label for="per_page" style="font-weight:500">Tampilkan</label>
+      <select id="per_page" name="per_page" onchange="this.form.submit()">
+        {% for opt in [10, 20, 50, 100] %}
+        <option value="{{ opt }}" {% if opt==per_page %}selected{% endif %}>{{ opt }}</option>
+        {% endfor %}
+      </select>
+    </form>
+
+    {% if total_pages > 1 %}
+    <div class="pager">
+      {% if page > 1 %}<a class="btn out" href="{{ url_for('hasil', pid=pid, page=page-1, per_page=per_page) }}">Sebelumnya</a>{% endif %}
+      <span class="mu">Halaman {{ page }} dari {{ total_pages }}</span>
+      {% if page < total_pages %}<a class="btn out" href="{{ url_for('hasil', pid=pid, page=page+1, per_page=per_page) }}">Berikutnya</a>{% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="loading-overlay" id="shapLoading">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <h2>Memuat Interpretasi SHAP</h2>
+  </div>
+</div>
+<script>
+  (function () {
+    const overlay = document.getElementById('shapLoading')
+
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('a.shap-link')
+      if (!link) return
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return
+
+      overlay.classList.add('show')
+      document.body.classList.add('loading-active')
+    })
+
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) {
+        overlay.classList.remove('show')
+        document.body.classList.remove('loading-active')
+      }
+    })
+  })()
+</script>
+{% endblock %}
