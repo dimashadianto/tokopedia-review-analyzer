@@ -1,63 +1,168 @@
-
 {% extends "base.html" %}
 {% block title %}Panduan · ReviewInsight{% endblock %}
 {% block content %}
-<div class="narrow">
+<div class="narrow guide">
   <h1>Panduan Penggunaan</h1>
-  <p class="sub">Langkah-langkah menggunakan ReviewInsight dan cara membaca hasilnya.</p>
-  
-  <div class="card">
-    <h2>Cara Menggunakan</h2>
-    <ol class="steps">
-      <li>
-        <b>Buka halaman produk di Tokopedia.</b>
-        Cari produk yang ingin dianalisis, kemudian salin tautan, link, atau URL produk tersebut dari browser atau aplikasi Tokopedia.
-      </li>
-      <li>
-        <b>Masukkan tautan produk.</b>
-        Tempelkan tautan produk Tokopedia pada kolom yang tersedia di halaman Beranda.
-        Pastikan tautan mengarah ke halaman produk yang benar.
-      </li>
-      <li>
-        <b>Klik Analisis.</b>
-        Sistem akan mengambil hingga {{ max_reviews }} ulasan dari produk tersebut dan melakukan klasifikasi ulasan.
-        Proses analisis dapat memakan waktu. Jangan menutup halaman sampai hasil muncul.
-      </li>
-      <li>
-        <b>Baca ringkasan hasil.</b>
-        Halaman hasil menampilkan jumlah ulasan, persentase ulasan asli dan palsu, skor analisis, serta kategori rekomendasi.
-      </li>
-      <li>
-        <b>Lihat interpretasi SHAP.</b>
-        Pada daftar ulasan, klik <b>Lihat Interpretasi SHAP</b> untuk mengetahui kata mana yang paling memengaruhi klasifikasi suatu ulasan.
-      </li>
-    </ol>
+  <p class="sub">Langkah-langkah menggunakan ReviewInsight dan cara membaca hasilnya. Klik gambar untuk memperbesar.</p>
+
+  <h2 id="langkah" class="sec">Cara Menggunakan</h2>
+  <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">1</span>
+      <h3>Buka halaman produk di Tokopedia</h3>
+      <p>Cari produk yang ingin dianalisis, lalu salin tautan, link, atau URL produk dari browser atau aplikasi Tokopedia.</p>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 1">
+      <img src="{{ url_for('static', filename='image/panduan/example_1.png') }}" alt="Menyalin tautan produk Tokopedia" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Salin tautan dari address bar browser.</figcaption>
+    </figure>
   </div>
-  
-  <div class="card">
+
+  <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">2</span>
+      <h3>Masukkan tautan produk</h3>
+      <p>Tempelkan tautan pada kolom di halaman Beranda. Pastikan tautan mengarah ke halaman produk yang benar.</p>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 2">
+      <img src="{{ url_for('static', filename='image/panduan/example_2.png') }}" alt="Kolom input tautan di Beranda" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Tempel tautan pada kolom di Beranda.</figcaption>
+    </figure>
+  </div>
+
+  <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">3</span>
+      <h3>Klik Analisis</h3>
+      <p>Sistem mengambil hingga <b>{{ max_reviews }}</b> ulasan dan mengklasifikasikannya. Proses ini bisa memakan waktu, jadi jangan tutup halaman sampai hasil muncul.</p>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 3">
+      <img src="{{ url_for('static', filename='image/panduan/example_3.png') }}" alt="Layar proses analisis" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Layar loading saat analisis berjalan.</figcaption>
+    </figure>
+  </div>
+
+  <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">4</span>
+      <h3>Baca ringkasan hasil</h3>
+      <p>Halaman hasil menampilkan jumlah ulasan, persentase ulasan asli dan palsu, skor analisis, serta kategori rekomendasi.</p>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 4">
+      <img src="{{ url_for('static', filename='image/panduan/example_4.png') }}" alt="Halaman ringkasan hasil" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Ringkasan, skor, dan daftar ulasan.</figcaption>
+    </figure>
+  </div>
+
+  <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">5</span>
+      <h3>Lihat interpretasi SHAP</h3>
+      <p>Pada daftar ulasan, klik <b>Lihat Interpretasi SHAP</b> untuk mengetahui kata mana yang paling memengaruhi klasifikasi. Halaman detail punya dua tab yaitu <b>Ringkasan</b> dan <b>Detail Teknis</b>.</p>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 5">
+      <img src="{{ url_for('static', filename='image/panduan/example_5.png') }}" alt="Halaman interpretasi SHAP" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Halaman detail interpretasi satu ulasan.</figcaption>
+    </figure>
+  </div>
+
+    <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">6</span>
+      <h3>Cek panduan membaca hasil</h3>
+      <p>Bingung dengan skor atau warna pada kata? Lihat penjelasan <b>Skor dan Kategori Rekomendasi</b> serta <b>Cara Membaca Interpretasi SHAP</b> di bawah.</p>
+      <div class="gactions" style="margin-top: 10px;">
+        <a class="btn out" href="#skor">Lihat Skor</a>
+        <a class="btn out" href="#shap">Lihat SHAP</a>
+      </div>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 6">
+      <img src="{{ url_for('static', filename='image/panduan/example_6.png') }}" alt="Panduan membaca skor dan SHAP" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Skor dan warna SHAP pada halaman hasil.</figcaption>
+    </figure>
+  </div>
+
+  <div class="card gstep">
+    <div class="gtext">
+      <span class="gnum">7</span>
+      <h3>Cek halaman Tentang Sistem</h3>
+      <p>Ingin tahu bagaimana sistem bekerja, teknologi yang dipakai, dan batasannya? Buka halaman <b>Tentang Sistem</b> sebelum menyimpulkan hasil analisis.</p>
+      <div class="gactions" style="margin-top: 10px;">
+        <a class="btn out" href="{{ url_for('tentang') }}">Buka Tentang Sistem</a>
+      </div>
+    </div>
+    <figure class="gfig" data-label="Gambar langkah 7">
+      <img src="{{ url_for('static', filename='image/panduan/example_7.png') }}" alt="Halaman Tentang Sistem" onerror="this.parentElement.classList.add('kosong')">
+      <figcaption>Halaman Tentang Sistem.</figcaption>
+    </figure>
+  </div>
+
+  <div class="card" id="skor">
     <h2>Skor dan Kategori Rekomendasi</h2>
-    <p class="sub">Skor analisis bernilai 0–100 dan dihitung dari proporsi ulasan yang diklasifikasikan sebagai asli.</p>
-    <table class="t">
-      <tr><th>Skor</th><th>Kategori</th></tr>
-      <tr><td>80 – 100</td><td><b class="ok">Layak Dipertimbangkan</b></td></tr>
-      <tr><td>50 – 79</td><td><b style="color:var(--amb)">Perlu Dipertimbangkan Kembali</b></td></tr>
-      <tr><td>0 – 49</td><td><b class="bad">Tidak Direkomendasikan</b></td></tr>
-    </table>
+    <p class="sub">Skor bernilai 0–100 dan dihitung dari proporsi ulasan yang diklasifikasikan sebagai asli.</p>
+    <div class="tiers">
+      <div class="tier t-ok"><b>80 – 100</b><span>Layak Dipertimbangkan</span></div>
+      <div class="tier t-mid"><b>50 – 79</b><span>Perlu Dipertimbangkan Kembali</span></div>
+      <div class="tier t-bad"><b>0 – 49</b><span>Tidak Direkomendasikan</span></div>
+    </div>
   </div>
-  
-  <div class="card">
+
+  <div class="card" id="shap">
     <h2>Cara Membaca Interpretasi SHAP</h2>
-    <p>Setiap kata diberi warna sesuai kontribusinya terhadap hasil klasifikasi. <b class="bad">Merah</b> berarti kata tersebut mendorong ulasan ke kelas <b>PALSU</b>, sedangkan <b class="ok">hijau</b> mendorongnya ke kelas <b>ASLI</b>. Semakin pekat warnanya, semakin besar pengaruh kata tersebut. Arahkan kursor ke sebuah kata untuk melihat nilai SHAP-nya.</p>
+    <p>Setiap kata diberi warna sesuai kontribusinya terhadap hasil klasifikasi. Semakin pekat warnanya, semakin besar pengaruhnya. Arahkan kursor ke sebuah kata untuk melihat nilai SHAP-nya.</p>
+    <div class="legend">
+      <span><i style="background:#fca5a5"></i><b class="bad">Merah</b> - mendorong ke kelas PALSU</span>
+      <span><i style="background:#86efac"></i><b class="ok">Hijau</b> - mendorong ke kelas ASLI</span>
+    </div>
+    <div class="box hl">
+      Contoh tampilan:
+      <span class="kata" style="background:#bbf7d0">wangi</span>
+      <span class="kata" style="background:#dcfce7">tahan</span>
+      <span class="kata" style="background:#bbf7d0">seharian</span>
+      <span class="kata" style="background:#fecaca">murah</span>
+      <span class="kata" style="background:#fca5a5">recommended</span>
+    </div>
   </div>
-  
-  <div class="card">
-    <h2>Catatan</h2>
-    <ul>
-      <li>Ulasan yang kurang dari {{ min_words }} kata setelah preprocessing tidak dianalisis, hanya dihitung jumlahnya.</li>
-      <li>Hasil analisis disimpan sementara selama {{ ttl_minutes }} menit. Setelah itu analisis perlu diulang.</li>
-      <li>Hasil sistem merupakan alat bantu pengambilan keputusan, bukan kebenaran mutlak.</li>
-      <li>Tautan produk harus memiliki ID produk agar dapat dianalisis</li>
-    </ul>
+
+  <div class="card" id="masalah">
+    <h2>Masalah Umum</h2>
+    <details>
+      <summary>Tautan saya ditolak</summary>
+      <p>Pastikan tautan adalah halaman produk Tokopedia dan memuat ID produk. Tautan yang tidak memiliki ID produk tidak dapat dianalisis.</p>
+    </details>
+    <details>
+      <summary>Analisis terasa lama</summary>
+      <p>Pengambilan dan klasifikasi ulasan membutuhkan waktu, terutama untuk produk dengan banyak ulasan. Tunggu sampai hasil muncul dan jangan menutup halaman.</p>
+    </details>
+    <details>
+      <summary>Hasil analisis hilang</summary>
+      <p>Hasil hanya disimpan sementara selama {{ ttl_minutes }} menit. Setelah itu, analisis perlu diulang dari Beranda.</p>
+    </details>
+    <details>
+      <summary>Ada ulasan yang tidak muncul di daftar</summary>
+      <p>Ulasan yang kurang dari {{ min_words }} kata setelah preprocessing tidak dianalisis, hanya dihitung jumlahnya.</p>
+    </details>
   </div>
+
+  <div class="estimasi" style="margin-bottom: 0px;">Hasil sistem merupakan alat bantu pengambilan keputusan, bukan kebenaran mutlak.</div>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true"><img alt=""></div>
 </div>
+
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var big = lb.querySelector('img');
+  document.querySelectorAll('.gfig img').forEach(function (img) {
+    img.addEventListener('click', function () {
+      big.src = img.src;
+      lb.classList.add('show');
+    });
+  });
+  lb.addEventListener('click', function () { lb.classList.remove('show'); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') lb.classList.remove('show');
+  });
+})();
+</script>
 {% endblock %}

@@ -15,13 +15,23 @@
       </div>
     </div>
 
-    <form class="card" method="post" action="{{ url_for('analisis') }}" id="form">
+    <form class="card" method="post" action="{{ url_for('analisis') }}" id="form"
+      data-min="{{ min_pages }}" data-max="{{ max_pages }}" data-per-halaman="{{ page_limit }}"
+      data-detik-halaman="{{ detik_per_halaman }}" data-detik-ulasan="{{ detik_per_ulasan }}">
       <h2>Mulai Analisis</h2>
       <p class="sub">
         Tempel tautan halaman produk Tokopedia untuk mengambil dan menganalisis ulasannya.
       </p>
       <label for="link">Tautan Produk Tokopedia</label>
       <input type="text" id="link" name="product_link" placeholder="https://www.tokopedia.com/..." autocomplete="off">
+
+      <div class="field field-row">
+        <label for="pages">Jumlah Halaman Ulasan</label>
+        <input type="number" id="pages" name="jumlah_halaman"
+          min="{{ min_pages }}" max="{{ max_pages }}" value="{{ default_pages }}" required>
+      </div>
+      <p class="estimasi" id="estimasi" aria-live="polite"></p>
+
       <button class="btn full" id="btn" type="submit">
         Analisis
       </button>
@@ -40,6 +50,41 @@
     const form = document.getElementById('form')
     const btn = document.getElementById('btn')
     const overlay = document.getElementById('loadingOverlay')
+    const pages = document.getElementById('pages')
+    const estimasi = document.getElementById('estimasi')
+
+    const cfg = {
+      min: Number(form.dataset.min),
+      max: Number(form.dataset.max),
+      perHalaman: Number(form.dataset.perHalaman),
+      detikHalaman: Number(form.dataset.detikHalaman),
+      detikUlasan: Number(form.dataset.detikUlasan),
+    }
+
+    function formatWaktu(detik) {
+      detik = Math.round(detik)
+      if (detik < 60) return detik + ' detik'
+      const m = Math.floor(detik / 60)
+      const s = detik % 60
+      return m + ' menit' + (s ? ' ' + s + ' detik' : '')
+    }
+
+    function hitung() {
+      let p = parseInt(pages.value, 10)
+      if (isNaN(p)) return null
+      p = Math.max(cfg.min, Math.min(p, cfg.max))
+      const ulasan = p * cfg.perHalaman
+      const waktu = p * cfg.detikHalaman + ulasan * cfg.detikUlasan
+      return 'Maksimal ' + ulasan + ' ulasan akan diambil dari ' + p +
+        ' halaman. Estimasi waktu ± ' + formatWaktu(waktu) + '.'
+    }
+
+    function update() {
+      estimasi.textContent = hitung() || ''
+    }
+
+    pages.addEventListener('input', update)
+    update()
 
     form.addEventListener('submit', function (e) {
       if (!form.checkValidity()) return

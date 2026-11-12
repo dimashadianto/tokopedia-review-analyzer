@@ -10,7 +10,10 @@ from flask import (
     request,
     url_for,
 )
-from config import MIN_WORDS, MAX_PAGES, PER_PAGE_OPTIONS
+from config import (
+    MIN_WORDS, MAX_PAGES, MIN_PAGES, DEFAULT_PAGES,
+    PER_PAGE_OPTIONS, DETIK_PER_HALAMAN, DETIK_PER_ULASAN,
+)
 from service.model import explain_review, predict_batch
 from service.preprocess import split_reviews
 from service.scraper import PAGE_LIMIT, ScraperError, extract_product_id, fetch_reviews
@@ -37,15 +40,26 @@ def kategori_rekomendasi(skor):
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template(
+        "index.html",
+        min_pages=MIN_PAGES,
+        max_pages=MAX_PAGES,
+        default_pages=DEFAULT_PAGES,
+        page_limit=PAGE_LIMIT,
+        detik_per_halaman=DETIK_PER_HALAMAN,
+        detik_per_ulasan=DETIK_PER_ULASAN,
+        min_words=MIN_WORDS,
+    )
 
 @app.post("/analisis")
 def analisis():
     link = request.form.get("product_link", "").strip()
+    jumlah_halaman = request.form.get("jumlah_halaman", DEFAULT_PAGES, type=int)
+    jumlah_halaman = max(MIN_PAGES, min(jumlah_halaman, MAX_PAGES))
 
     try:
         pid = extract_product_id(link)
-        reviews = fetch_reviews(pid)
+        reviews = fetch_reviews(pid, max_pages=jumlah_halaman)
     except ScraperError as e:
         flash(str(e))
         return redirect(url_for("index"))
