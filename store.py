@@ -2,13 +2,18 @@ import json
 import os
 import sqlite3
 import time
+from pathlib import Path
 from contextlib import contextmanager
 
 TTL_SECONDS = 30 * 60
 
-DB_PATH = os.environ.get(
-    "DB_PATH",
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "hasil.db"),
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DB_PATH = Path(
+    os.environ.get(
+        "DB_PATH",
+          str(BASE_DIR / "data" / "hasil.db"),
+    )
 )
 
 _SCHEMA = """
@@ -49,7 +54,7 @@ def _db():
         conn.close()
 
 def init_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with _db() as conn:
         conn.execute("PRAGMA journal_mode = WAL")
         conn.executescript(_SCHEMA)

@@ -29,8 +29,6 @@ from store import (
 
 import sqlite3
 c = sqlite3.connect("data/hasil.db")
-print(c.execute("SELECT pid, total_scraped, jumlah_asli, jumlah_palsu FROM hasil").fetchall())
-print(c.execute("SELECT pid, kind, COUNT(*) FROM ulasan GROUP BY pid, kind").fetchall())
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "...")
