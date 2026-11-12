@@ -23,7 +23,7 @@
     <p>Berdasarkan hasil analisis terhadap {{ n }} ulasan, sebanyak {{ pa }}% ulasan teridentifikasi sebagai ulasan asli
       dan {{ pp }}% sebagai ulasan palsu. Produk termasuk dalam kategori <b>{{ data.kategori }}</b>.</p>
   </div>
-  <p class="mu" style="font-size:.8rem;margin:0 0 20px">{{ data.total_scraped }} ulasan diambil, {{ data.removed|length
+  <p class="estimasi" style="font-size:.9rem;margin:0 0 20px;">{{ data.total_scraped }} ulasan diambil, {{ data.removed|length
     }} dilewati karena kurang dari {{ min_words }} kata setelah ulasan diproses.</p>
 </div>
 
@@ -51,7 +51,7 @@
     <form class="perpage" method="get" action="{{ url_for('hasil', pid=pid) }}">
       <label for="per_page" style="font-weight:500">Tampilkan</label>
       <select id="per_page" name="per_page" onchange="this.form.submit()">
-        {% for opt in [10, 20, 50, 100] %}
+        {% for opt in [10, 20, 50, 100, 200, 500] %}
         <option value="{{ opt }}" {% if opt==per_page %}selected{% endif %}>{{ opt }}</option>
         {% endfor %}
       </select>
