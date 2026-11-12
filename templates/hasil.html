@@ -2,7 +2,7 @@
 {% block title %}Hasil Analisis · ReviewInsight{% endblock %}
 {% block main_class %}wide{% endblock %}
 {% block content %}
-{% set n = data.kept|length %}
+{% set n = data.total_kept %}
 {% set pa = (100 * data.jumlah_asli / n)|round(1) %}
 {% set pp = (100 - pa)|round(1) %}
 {% set tone = 't-ok' if data.skor >= 80 else ('t-mid' if data.skor >= 50 else 't-bad') %}
@@ -23,8 +23,8 @@
     <p>Berdasarkan hasil analisis terhadap {{ n }} ulasan, sebanyak {{ pa }}% ulasan teridentifikasi sebagai ulasan asli
       dan {{ pp }}% sebagai ulasan palsu. Produk termasuk dalam kategori <b>{{ data.kategori }}</b>.</p>
   </div>
-  <p class="estimasi" style="font-size:.9rem;margin:0 0 20px;">{{ data.total_scraped }} ulasan diambil, {{ data.removed|length
-    }} dilewati karena kurang dari {{ min_words }} kata setelah ulasan diproses.</p>
+  <p class="estimasi" style="font-size:.9rem;margin:0 0 20px;">{{ data.total_scraped }} ulasan diambil, {{ data.total_removed }}
+    dilewati karena kurang dari {{ min_words }} kata setelah ulasan diproses.</p>
 </div>
 
 <div class="card list">

@@ -17,10 +17,25 @@ from config import (
 from service.model import explain_review, predict_batch
 from service.preprocess import split_reviews
 from service.scraper import PAGE_LIMIT, ScraperError, extract_product_id, fetch_reviews
-from store import TTL_SECONDS, get_result, save_result
+from store import (
+    TTL_SECONDS,
+    get_kept,
+    get_kept_page,
+    get_summary,
+    init_db,
+    save_result,
+    save_shap,
+)
+
+import sqlite3
+c = sqlite3.connect("data/hasil.db")
+print(c.execute("SELECT pid, total_scraped, jumlah_asli, jumlah_palsu FROM hasil").fetchall())
+print(c.execute("SELECT pid, kind, COUNT(*) FROM ulasan GROUP BY pid, kind").fetchall())
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "...")
+
+init_db()
 
 _shap_lock = threading.Lock()
 
@@ -97,13 +112,13 @@ def analisis():
 
 @app.get("/hasil/<pid>")
 def hasil(pid):
-    data = get_result(pid)
+    data = get_summary(pid)
 
     if data is None:
         flash("Data tidak ditemukan atau sudah kedaluwarsa, silakan analisis ulang.")
         return redirect(url_for("index"))
 
-    total = len(data["kept"])
+    total = data["total_kept"]
 
     per_page = request.args.get("per_page", 10, type=int)
     if per_page not in PER_PAGE_OPTIONS:
@@ -113,9 +128,8 @@ def hasil(pid):
     page = min(max(request.args.get("page", 1, type=int), 1), total_pages)
 
     start = (page - 1) * per_page
-    end = min(start + per_page, total)
 
-    items = [(i, data["kept"][i]) for i in range(start, end)]
+    items = get_kept_page(pid, start, per_page)
 
     return render_template(
         "hasil.html",
@@ -131,21 +145,25 @@ def hasil(pid):
 
 @app.get("/detail/<pid>/<int:idx>")
 def detail(pid, idx):
-    data = get_result(pid)
+    data = get_summary(pid)
 
     if data is None:
         flash("Data tidak ditemukan atau sudah kedaluwarsa, silakan analisis ulang.")
         return redirect(url_for("index"))
 
-    if not 0 <= idx < len(data["kept"]):
-        abort(404)
+    review = get_kept(pid, idx)
 
-    review = data["kept"][idx]
+    if review is None:
+        abort(404)
 
     if "shap" not in review:
         with _shap_lock:
+            review = get_kept(pid, idx)
+            if review is None:
+                abort(404)
             if "shap" not in review:
                 review["shap"] = explain_review(review["review_clean"])
+                save_shap(pid, idx, review["shap"])
 
     tokens = review["shap"]["tokens"]
     top_tokens = sorted(tokens, key=lambda t: abs(t["value"]), reverse=True)[:8]
