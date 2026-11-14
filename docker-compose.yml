@@ -1,0 +1,24 @@
+services:
+  tokopedia-review-analyzer:
+    image: dimashadi/tokopedia-review-analyzer:${IMAGE_TAG:-latest}
+    container_name: tokopedia-review-analyzer
+    restart: unless-stopped
+    env_file:
+      - .env
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    ports:
+      - "127.0.0.1:${HOST_PORT:-8081}:80"
+    networks:
+      - web-network
+    volumes:
+      - hf_cache:/app/.cache/huggingface
+      - ./data:/app/data
+
+networks:
+  web-network:
+    external: true
+
+volumes:
+  hf_cache:
+  app_data:

@@ -4,7 +4,7 @@ import numpy as np
 import shap
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-from config import MODEL_RESULT_PATH
+from config import MODEL_ID, HF_TOKEN, MODEL_RESULT_PATH
 import re
 
 MAX_LENGTH = 128
@@ -19,15 +19,15 @@ RGB_ASLI = (22, 163, 74)
 
 _infer_lock = threading.RLock()
 
-if not Path(MODEL_RESULT_PATH).exists():
-    raise FileNotFoundError(
-        f"Model tidak ditemukan di {MODEL_RESULT_PATH}. "
-        "Jalankan training/train.py dulu atau cek MODEL_RESULT_PATH di config.py."
-    )
-
-tokenizer = AutoTokenizer.from_pretrained(MODEL_RESULT_PATH)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_RESULT_PATH)
+# Comment ini jika dev
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, token=HF_TOKEN)
+model = AutoModelForSequenceClassification.from_pretrained(MODEL_ID, token=HF_TOKEN)
 model.eval()
+
+# # Hapus comment dibawah untuk dev python app.py -- agar tidak install jika sudah ada
+# tokenizer = AutoTokenizer.from_pretrained(str(MODEL_RESULT_PATH), local_files_only=True)
+# model = AutoModelForSequenceClassification.from_pretrained(str(MODEL_RESULT_PATH), local_files_only=True)
+# model.eval()
 
 def _predict_proba(texts):
     texts = [str(t) for t in texts]

@@ -1,5 +1,3 @@
-import sys
-from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
@@ -8,18 +6,28 @@ import matplotlib.pyplot as plt
 from datasets import Dataset
 from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.metrics import (
-    accuracy_score, precision_recall_fscore_support,
-    classification_report, confusion_matrix, ConfusionMatrixDisplay,
+    accuracy_score,
+    precision_recall_fscore_support,
+    classification_report,
+    confusion_matrix,
+    ConfusionMatrixDisplay,
 )
 
 from transformers import (
-    AutoTokenizer, AutoModelForSequenceClassification,
-    DataCollatorWithPadding, TrainingArguments, Trainer,
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+    DataCollatorWithPadding,
+    TrainingArguments,
+    Trainer,
 )
+
+from huggingface_hub import HfApi
 
 from config import (
     DATA_TRAIN_PATH,
+    MODEL_ID,
     MODEL_RESULT_PATH,
+    HF_TOKEN,
     MIN_WORDS,
     TEST_RESULT_PATH,
     CONFUSION_MATRIX_PATH,
@@ -41,18 +49,14 @@ print(
 
 df = pd.read_csv(DATA_TRAIN_PATH)
 
-df["label"] = (
-    df["label"].astype(str).str.strip().str.lower()
-)
+df["label"] = df["label"].astype(str).str.strip().str.lower()
 
 df = df[df["label"].isin(LABEL2ID)]
 df = df.dropna(subset=["text_model"])
 
 df["text"] = df["text_model"].astype(str).str.strip()
 
-df = df[
-    df["text"].str.split().str.len() >= MIN_WORDS
-]
+df = df[df["text"].str.split().str.len() >= MIN_WORDS]
 
 df["labels"] = df["label"].map(LABEL2ID)
 df = df.reset_index(drop=True)
@@ -146,9 +150,7 @@ class WeightedTrainer(Trainer):
         loss = torch.nn.functional.cross_entropy(
             outputs.logits,
             labels,
-            weight=class_weights.to(
-                outputs.logits.device
-            ),
+            weight=class_weights.to(outputs.logits.device),
         )
 
         return (loss, outputs) if return_outputs else loss
@@ -168,11 +170,9 @@ def compute_metrics(eval_pred):
     return {
         "accuracy": accuracy_score(labels, preds),
         "f1_macro": float(f1.mean()),
-
         "precision_palsu": float(p[0]),
         "recall_palsu": float(r[0]),
         "f1_palsu": float(f1[0]),
-
         "precision_asli": float(p[1]),
         "recall_asli": float(r[1]),
         "f1_asli": float(f1[1]),
@@ -191,9 +191,7 @@ args = TrainingArguments(
     report_to="none",
 )
 
-TrainerClass = (
-    WeightedTrainer if USE_CLASS_WEIGHT else Trainer
-)
+TrainerClass = WeightedTrainer if USE_CLASS_WEIGHT else Trainer
 
 trainer = TrainerClass(
     model=model,
@@ -209,27 +207,13 @@ print("\nMulai training IndoBERT...")
 
 result = trainer.train()
 
-print(
-    f"Training selesai. Loss: {result.training_loss:.4f}"
-)
+print(f"Training selesai. Loss: {result.training_loss:.4f}")
 
-print(
-    "\nValidation:",
-    {
-        k: round(v, 4)
-        for k, v in trainer.evaluate(val_ds).items()
-        if k.startswith("eval_")
-    },
-)
+print("\nValidation:")
+print(trainer.evaluate(val_ds))
 
-print(
-    "Testing   :",
-    {
-        k: round(v, 4)
-        for k, v in trainer.evaluate(test_ds).items()
-        if k.startswith("eval_")
-    },
-)
+print("\nTesting:")
+print(trainer.evaluate(test_ds))
 
 pred = trainer.predict(test_ds)
 
@@ -263,9 +247,7 @@ disp = ConfusionMatrixDisplay(
 )
 
 disp.plot(cmap="Blues")
-
 plt.title("Confusion Matrix IndoBERT")
-
 plt.tight_layout()
 
 CONFUSION_MATRIX_PATH.parent.mkdir(
@@ -280,13 +262,25 @@ plt.savefig(
 )
 
 plt.show()
-
 plt.close()
 
-print(
-    "Confusion Matrix disimpan:",
-    CONFUSION_MATRIX_PATH,
+if "review_id" in test_df.columns:
+    out = test_df[["review_id", "text", "label"]].copy()
+else:
+    out = test_df[["text", "label"]].copy()
+
+out["prediction"] = [
+    ID2LABEL[int(i)] for i in y_pred
+]
+
+out["benar"] = out["label"] == out["prediction"]
+
+TEST_RESULT_PATH.parent.mkdir(
+    parents=True,
+    exist_ok=True,
 )
+
+out.to_csv(TEST_RESULT_PATH, index=False)
 
 MODEL_RESULT_PATH.mkdir(
     parents=True,
@@ -296,33 +290,27 @@ MODEL_RESULT_PATH.mkdir(
 trainer.save_model(str(MODEL_RESULT_PATH))
 tokenizer.save_pretrained(str(MODEL_RESULT_PATH))
 
-print("\nModel disimpan:", MODEL_RESULT_PATH)
+print("\nModel lokal disimpan:", MODEL_RESULT_PATH)
 
-if "review_id" in test_df.columns:
-    out = test_df[
-        ["review_id", "text", "label"]
-    ].copy()
-else:
-    out = test_df[
-        ["text", "label"]
-    ].copy()
+if not HF_TOKEN:
+    raise ValueError("HF_TOKEN belum diatur di .env")
 
-out["prediction"] = [
-    ID2LABEL[int(i)] for i in y_pred
-]
+api = HfApi(token=HF_TOKEN)
 
-out["benar"] = (
-    out["label"] == out["prediction"]
-)
-
-TEST_RESULT_PATH.parent.mkdir(
-    parents=True,
+api.create_repo(
+    repo_id=MODEL_ID,
+    repo_type="model",
     exist_ok=True,
 )
 
-out.to_csv(
-    TEST_RESULT_PATH,
-    index=False,
+print("\nMengupload model ke Hugging Face...")
+
+api.upload_folder(
+    folder_path=str(MODEL_RESULT_PATH),
+    repo_id=MODEL_ID,
+    repo_type="model",
+    commit_message="Update IndoBERT after retraining",
 )
 
-print("Hasil testing disimpan:", TEST_RESULT_PATH)
+print("\nModel berhasil diperbarui!")
+print(f"https://huggingface.co/{MODEL_ID}")

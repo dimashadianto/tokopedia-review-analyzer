@@ -190,26 +190,21 @@ def calculate_review_score(row, duplicate_count, burst_count, template_count):
     if duplicate_count >= DUPLICATE_MIN_COUNT and n >= 3:
         add_fake(2, "K2", f"teks duplikat >={DUPLICATE_MIN_COUNT}")
 
-    if re.search(r"([a-z])\1{2,}", text) or (
-        len(original_text) > 8 and original_text.isupper()
-    ):
-        add_fake(1, "K3", "huruf berulang/kapital semua")
-
     if has_promotion(text):
-        add_fake(2, "K4", "promosi/kontak/link")
+        add_fake(2, "K3", "promosi/kontak/link")
 
     if burst_count >= BURST_MIN_COUNT and n <= SHORT_REVIEW_MAX_WORDS:
-        add_fake(1, "K5", "lonjakan ulasan pendek")
+        add_fake(1, "K4", "lonjakan ulasan pendek")
 
     if (
         EXAGGERATION_PATTERN.search(clean)
         and not has_reason
         and len(aspects) < 2
     ):
-        add_fake(1, "K6", "klaim berlebihan tanpa penjelasan")
+        add_fake(1, "K5", "klaim berlebihan tanpa penjelasan")
 
     if PURCHASE_CALL_PATTERN.search(clean):
-        add_fake(1, "K7", "ajakan membeli/slogan")
+        add_fake(1, "K6", "ajakan membeli/slogan")
 
     is_repetitive = n >= 6 and diversity < REPETITIVE_DIVERSITY_MAX
     is_template = (
@@ -217,7 +212,7 @@ def calculate_review_score(row, duplicate_count, burst_count, template_count):
         and duplicate_count < DUPLICATE_MIN_COUNT
     )
     if is_repetitive or is_template:
-        add_fake(1, "K8", "pola repetitif/template")
+        add_fake(1, "K7", "pola repetitif/template")
 
     substance = (
         has_experience or has_reason or has_context or has_preference
@@ -225,7 +220,7 @@ def calculate_review_score(row, duplicate_count, burst_count, template_count):
     )
 
     if fake > 0 and n >= 3 and not substance:
-        add_fake(1, "K9", "tidak ada informasi pengalaman bermakna")
+        add_fake(1, "K8", "tidak ada informasi pengalaman bermakna")
 
     if n >= LONG_TEXT_MIN_WORDS and generic_ratio < 0.5:
         add_genuine("A1", "teks cukup panjang")
@@ -256,7 +251,7 @@ def calculate_review_score(row, duplicate_count, burst_count, template_count):
         and diversity >= NATURAL_DIVERSITY_MIN
         and generic_ratio < 0.5
         and substance
-        and not any(c in codes for c in ("K3", "K4", "K8"))
+        and not any(c in codes for c in ("K3", "K7"))
     ):
         add_genuine("A9", "bahasa natural dan relevan")
 
