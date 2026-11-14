@@ -37,16 +37,11 @@
 
       <h2>Kata yang Memengaruhi Penilaian</h2>
       <div>
-        {% for w in review.review_text.split() %}
-        {% set key = w|lower|trim('.,!?"') %}
-        {% set v = vals.get(key) %}
-        {% if v is none %}
-        <span class="kata">{{ w }}</span>
-        {% else %}
-        {% set pct = (15 + 45 * (v|abs / scale))|round|int %}
-        <span class="kata"
-          style="background:color-mix(in srgb,{{ 'var(--red)' if v > 0 else 'var(--g)' }} {{ pct }}%,transparent)">{{ w
-          }}</span>
+        {% for t in s.tokens %}
+        {% set txt = t.token|replace('##','')|replace('▁',' ') %}
+        {% if txt|trim %}
+        {% set pct = (15 + 45 * (t.value|abs / scale))|round|int %}
+        <span class="kata" style="background:color-mix(in srgb,{{ 'var(--red)' if t.value > 0 else 'var(--g)' }} {{ pct }}%,transparent)">{{ txt|trim }}</span>
         {% endif %}
         {% endfor %}
       </div>

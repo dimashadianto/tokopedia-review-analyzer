@@ -13,10 +13,18 @@ DEFAULT_PAGES = 3
 DETIK_PER_HALAMAN = 0.5
 DETIK_PER_ULASAN = 0.1
 
-SLANG_PATH = BASE_DIR / "training" / "data" / "indonesia_slang.csv"
+SLANG_PATH = BASE_DIR / "training" / "data" / "normalisasi_slang.csv"
+ABBREVIATION_PATH = BASE_DIR / "training" / "data" / "normalisasi_singkatan.csv"
+ELONGATION_PATH = BASE_DIR / "training" / "data" / "normalisasi_pemanjangan_karakter.csv"
+
 DATA_TRAIN_PATH = BASE_DIR / "training" / "data" / "review_label.csv"
 
-MODEL_RESULT_PATH = os.getenv("MODEL_ID", "dimashadianto/indobert-review")
+MODEL_ID = os.getenv(
+    "MODEL_ID",
+    "dimashadianto/indobert-review"
+)
+
+MODEL_RESULT_PATH = BASE_DIR / "model" / "indobert-review"
 HF_TOKEN = os.getenv("HF_TOKEN") or None
 
 TEST_RESULT_PATH = BASE_DIR / "training" / "result" / "hasil_testing_indobert.csv"

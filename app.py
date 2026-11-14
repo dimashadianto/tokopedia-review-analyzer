@@ -27,9 +27,6 @@ from store import (
     save_shap,
 )
 
-import sqlite3
-c = sqlite3.connect("data/hasil.db")
-
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "...")
 
